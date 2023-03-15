@@ -25,6 +25,44 @@ individuals_with_probabilities = list(zip(pop, selection_probabilities))
 #sort them s.t. higher fitness is first
 individuals_with_probabilities.sort(key=lambda x: x[1], reverse=True)
 
+selected = []
 #select individuals based on probabilities /todo
+for i in range(int(len(pop)/2)):
+    total_prob = sum(p for _, p in individuals_with_probabilities)
+    cum_prob = 0
+    cum_prob_list = []
+    for _, p in individuals_with_probabilities:
+        cum_prob += p / total_prob
+        cum_prob_list.append(cum_prob)
 
+        # Generate a random number between 0 and 1
+    r = random.uniform(0, 1)
+
+    # Find the index of the selected individual using binary search
+    left = 0
+    right = len(cum_prob_list) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if r < cum_prob_list[mid]:
+            right = mid - 1
+        elif r > cum_prob_list[mid]:
+            left = mid + 1
+        else:
+            selected.append(individuals_with_probabilities[mid][0])
+    selected.append(individuals_with_probabilities[left][0])
+
+newpop = []
+parents = random.sample(range(0, 10), 10)
+for i in range(0, 10, 2):
+    mother = selected[parents[i]]
+    newpop.append(mother)
+
+    father = selected[parents[i+1]]
+    newpop.append(father)
+
+    child1, child2 = crossover(mother.solution, father.solution)
+    newpop.append(child1)
+    newpop.append(child2)
+
+pop = newpop
 
